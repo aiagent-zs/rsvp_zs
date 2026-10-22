@@ -54,7 +54,7 @@ export function CountdownTimer({
         <div className="mt-2 flex gap-4">
           {units.map((unit) => (
             <div key={unit.label} className="text-center">
-              <p className="text-xl font-heading font-bold tabular-nums text-primary sm:text-2xl">
+              <p className="text-xl font-heading font-bold tabular-nums text-primary">
                 {String(unit.value).padStart(2, "0")}
               </p>
               <p className="text-[11px] text-muted-foreground">{unit.label}</p>
@@ -62,7 +62,7 @@ export function CountdownTimer({
           ))}
         </div>
       </div>
-      <div className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary sm:flex">
+      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
         <CalendarIcon className="h-5 w-5" />
       </div>
     </div>

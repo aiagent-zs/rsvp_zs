@@ -44,6 +44,10 @@ export async function getEventConfig() {
     endTime,
     time: `${startTime.replace(":", ".")} - ${endTime.replace(":", ".")} WIB`,
     dateISO: `${dateOnly}T${startTime}:00+07:00`,
+    weekday: new Date(`${dateOnly}T00:00:00Z`).toLocaleDateString("id-ID", {
+      weekday: "long",
+      timeZone: "UTC",
+    }),
     ...(date && { date: formatEventDate(date) }),
     ...(overrides.location && { location: overrides.location }),
     ...(overrides.mapsUrl && /^https?:\/\//.test(overrides.mapsUrl) && { mapsUrl: overrides.mapsUrl }),

@@ -1,20 +1,17 @@
 import Image from "next/image";
 import { Caveat } from "next/font/google";
-import { FileText, Target, Wallet } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { RsvpForm } from "@/components/RsvpForm";
 import { CountdownTimer } from "@/components/CountdownTimer";
-import { CalendarIcon, ClockIcon, MapPinIcon } from "@/components/icons";
+import { GuestName } from "@/components/GuestName";
 import { LocationMap } from "@/components/LocationMap";
 import { Reveal } from "@/components/Reveal";
 import { StickyRsvpCta } from "@/components/StickyRsvpCta";
 import { getEventConfig, getMapEmbedUrl } from "@/lib/event-server";
 
 const caveat = Caveat({ subsets: ["latin"], weight: "600" });
-
-const highlightIcons = [FileText, Wallet, Target];
 
 export const revalidate = 60;
 
@@ -23,204 +20,214 @@ export default async function Home() {
   const mapEmbedUrl = await getMapEmbedUrl(eventConfig.mapsUrl, eventConfig.location);
 
   return (
-    <main className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 lg:px-16">
-          <span className="font-heading text-xs font-semibold text-muted-foreground">
-            {eventConfig.series}
-          </span>
-          <Image
-            src="/logo.png"
-            alt={eventConfig.organizer}
-            width={154}
-            height={154}
-            className="h-12 w-12 object-contain"
-            priority
-          />
-        </div>
-      </header>
-
-      <section className="relative overflow-hidden">
-        <div className="absolute inset-0 hidden lg:block">
-          <Image
-            src="/bg-hero.png"
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover object-right"
-          />
-        </div>
-
-        <div className="relative mx-auto grid max-w-7xl lg:grid-cols-[1.05fr_1fr]">
-          <div className="relative z-10 flex flex-col justify-center px-6 py-14 sm:px-10 lg:py-24 lg:pr-10 lg:pl-16">
-            <p className="font-heading text-xs font-semibold uppercase tracking-[0.2em] text-primary">
-              {eventConfig.pillars.join(" • ")}
+    <div className="min-h-screen bg-muted">
+      <main className="mx-auto max-w-md bg-background shadow-xl">
+        {/* Sampul undangan */}
+        <section className="flex min-h-svh p-3">
+          <Frame className="flex flex-1 flex-col items-center px-6 py-8 text-center">
+            <Image
+              src="/logo.png"
+              alt={eventConfig.organizer}
+              width={154}
+              height={154}
+              className="h-14 w-14 object-contain"
+              priority
+            />
+            <p className="mt-6 font-heading text-xs font-semibold uppercase tracking-[0.35em] text-muted-foreground">
+              Undangan
             </p>
-            <h1 className="mt-4 font-heading text-5xl font-extrabold uppercase leading-[0.95] tracking-tight text-foreground sm:text-6xl">
+            <p className="mt-1 font-heading text-[11px] font-semibold uppercase tracking-[0.2em] text-primary">
+              {eventConfig.series}
+            </p>
+
+            <div className="relative mt-6 aspect-4/5 w-full max-w-60 overflow-hidden rounded-t-full border-4 border-background shadow-lg ring-1 ring-primary/30">
+              <Image
+                src="/bg-hero.png"
+                alt=""
+                fill
+                priority
+                sizes="240px"
+                className="object-cover object-right"
+              />
+            </div>
+
+            <h1 className="mt-6 font-heading text-4xl font-extrabold uppercase leading-[0.95] tracking-tight text-foreground">
               {eventConfig.heroTitle.line1}
               <br />
               <span className="text-primary">{eventConfig.heroTitle.line2}</span>{" "}
               <span className="text-brand-orange">{eventConfig.heroTitle.year}</span>
             </h1>
-            <div className="mt-4 h-1 w-16 rounded-full bg-brand-orange" />
-            <p className="mt-5 max-w-md text-base leading-relaxed text-muted-foreground">
-              {eventConfig.heroSubheading}
-            </p>
-
-            <div className="mt-8 grid max-w-xl gap-3 sm:grid-cols-3">
-              <HeroFact icon={<CalendarIcon className="h-5 w-5" />} label="Tanggal">
-                {eventConfig.date}
-              </HeroFact>
-              <HeroFact icon={<ClockIcon className="h-5 w-5" />} label="Waktu">
-                {eventConfig.time}
-              </HeroFact>
-              <HeroFact icon={<MapPinIcon className="h-5 w-5" />} label="Lokasi">
-                {eventConfig.location}
-              </HeroFact>
-            </div>
-
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <a
-                href="#rsvp"
-                className={cn(buttonVariants(), "h-12 gap-2 rounded-full px-7 text-sm font-semibold")}
-              >
-                Konfirmasi Kehadiran
-                <span aria-hidden>&rarr;</span>
-              </a>
-              <a
-                href="#agenda"
-                className={cn(buttonVariants({ variant: "outline" }), "h-12 rounded-full px-7 text-sm font-semibold")}
-              >
-                Lihat Susunan Acara
-              </a>
-            </div>
-          </div>
-
-          <div className="relative hidden min-h-140 lg:block">
-            <p
-              className={`absolute right-8 top-8 max-w-52.5 text-right text-xl leading-snug text-foreground drop-shadow-[0_1px_2px_rgba(255,255,255,0.8)] ${caveat.className}`}
-            >
+            <p className={`mt-3 text-lg leading-snug text-foreground ${caveat.className}`}>
               &ldquo;{eventConfig.quote}&rdquo;
             </p>
-            <div className="absolute right-8 bottom-8 left-8">
-              <CountdownTimer
-                targetDate={eventConfig.dateISO}
-                eventName={eventConfig.eventName}
-              />
+
+            <div className="mt-auto w-full pt-8">
+              <Ornament />
+              <p className="mt-4 text-xs text-muted-foreground">Kepada Yth.</p>
+              <p className="mt-1 font-heading text-base font-semibold text-foreground">
+                <GuestName fallback="Bapak/Ibu/Saudara/i" />
+              </p>
+              <a
+                href="#undangan"
+                className={cn(buttonVariants(), "mt-5 h-11 gap-2 rounded-full px-7 text-sm font-semibold")}
+              >
+                Buka Undangan
+                <span aria-hidden>&darr;</span>
+              </a>
             </div>
-          </div>
-        </div>
+          </Frame>
+        </section>
 
-        <div className="mx-6 overflow-hidden rounded-2xl lg:hidden">
-          <div className="relative aspect-4/3 w-full">
-            <Image
-              src="/bg-hero.png"
-              alt=""
-              fill
-              sizes="100vw"
-              className="object-cover object-right"
-            />
-          </div>
-        </div>
-        <div className="px-6 py-8 lg:hidden">
-          <CountdownTimer
-            targetDate={eventConfig.dateISO}
-            eventName={eventConfig.eventName}
-          />
-        </div>
-      </section>
+        {/* Isi surat */}
+        <section id="undangan" className="scroll-mt-2 px-3 pb-3">
+          <Frame className="px-6 py-12 text-center">
+            <Reveal>
+              <p className="font-heading text-sm font-semibold text-primary">
+                Assalamu&rsquo;alaikum Warahmatullahi Wabarakatuh
+              </p>
+              <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
+                Dengan hormat, kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri
+              </p>
+              <h2 className="mt-4 font-heading text-2xl font-extrabold uppercase leading-tight text-foreground">
+                {eventConfig.eventName}
+              </h2>
+              <p className="mt-1 text-xs font-medium text-brand-orange">
+                {eventConfig.pillars.join(" • ")}
+              </p>
+              <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
+                {eventConfig.description}
+              </p>
+            </Reveal>
 
-      <section id="agenda" className="border-y bg-muted px-6 py-16">
-        <div className="mx-auto max-w-5xl">
-          <Reveal className="text-center">
-            <h2 className="font-heading text-xl font-bold text-primary">Yang Akan Dibahas</h2>
-            <div className="mx-auto mt-2 h-0.5 w-10 bg-brand-orange" />
-            <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-muted-foreground">
-              {eventConfig.description}
-            </p>
-          </Reveal>
+            <Reveal className="mt-10">
+              <Ornament />
+              <dl className="mt-6 space-y-5">
+                <Detail label="Hari / Tanggal">
+                  {eventConfig.weekday}, {eventConfig.date}
+                </Detail>
+                <Detail label="Waktu">{eventConfig.time}</Detail>
+                <Detail label="Tempat">{eventConfig.location}</Detail>
+              </dl>
+              <div className="mt-8">
+                <CountdownTimer
+                  targetDate={eventConfig.dateISO}
+                  eventName={eventConfig.eventName}
+                />
+              </div>
+            </Reveal>
 
-          <div className="mt-10 grid gap-5 sm:grid-cols-3">
-            {eventConfig.highlights.map((item, index) => {
-              const Icon = highlightIcons[index % highlightIcons.length];
-              return (
-                <Reveal key={item.title} delay={index * 120}>
-                  <Card className="h-full bg-background p-2">
-                    <CardContent>
-                      <span className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary">
-                        <Icon className="size-5" />
-                      </span>
-                      <h3 className="mt-4 font-heading text-sm font-semibold text-foreground">
+            <Reveal className="mt-10">
+              <Ornament />
+              <h3 className="mt-6 font-heading text-sm font-bold text-primary">
+                Dalam acara ini akan dibahas
+              </h3>
+              <ol className="mt-5 space-y-5 text-left">
+                {eventConfig.highlights.map((item, index) => (
+                  <li key={item.title} className="flex gap-4">
+                    <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-primary/40 font-heading text-sm font-bold text-primary">
+                      {index + 1}
+                    </span>
+                    <div>
+                      <p className="font-heading text-sm font-semibold text-foreground">
                         {item.title}
-                      </h3>
-                      <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                      </p>
+                      <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                         {item.detail}
                       </p>
-                    </CardContent>
-                  </Card>
-                </Reveal>
-              );
-            })}
-          </div>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            </Reveal>
+          </Frame>
+        </section>
+
+        <div className="px-3 pb-3">
+          <Frame className="py-0">
+            <Reveal>
+              <LocationMap
+                embedUrl={mapEmbedUrl}
+                location={eventConfig.location}
+                mapsUrl={eventConfig.mapsUrl}
+              />
+            </Reveal>
+          </Frame>
         </div>
-      </section>
 
-      <Reveal>
-        <LocationMap
-          embedUrl={mapEmbedUrl}
-          location={eventConfig.location}
-          mapsUrl={eventConfig.mapsUrl}
-        />
-      </Reveal>
+        <section id="rsvp" className="scroll-mt-2 px-3 pb-3">
+          <Frame className="px-6 py-12">
+            <Reveal>
+              <div className="text-center">
+                <h2 className="font-heading text-xl font-bold text-primary">
+                  Konfirmasi Kehadiran
+                </h2>
+                <div className="mx-auto mt-2 h-0.5 w-10 bg-brand-orange" />
+                <p className="mt-4 text-sm text-muted-foreground">
+                  Mohon konfirmasi kehadiran Anda sebelum {eventConfig.rsvpDeadline}.
+                </p>
+              </div>
 
-      <section id="rsvp" className="scroll-mt-4 bg-muted px-6 py-16">
-        <Reveal className="mx-auto max-w-md">
-          <div className="text-center">
-            <h2 className="font-heading text-xl font-bold text-primary">Konfirmasi Kehadiran</h2>
-            <div className="mx-auto mt-2 h-0.5 w-10 bg-brand-orange" />
-            <p className="mt-4 text-sm text-muted-foreground">
-              Mohon konfirmasi kehadiran Anda sebelum {eventConfig.rsvpDeadline}.
-            </p>
-          </div>
+              <Card className="mt-8 bg-background p-2 shadow-sm">
+                <CardContent>
+                  <RsvpForm />
+                </CardContent>
+              </Card>
+            </Reveal>
+          </Frame>
+        </section>
 
-          <Card className="mt-8 bg-background p-2 shadow-sm sm:p-4">
-            <CardContent>
-              <RsvpForm />
-            </CardContent>
-          </Card>
-        </Reveal>
-      </section>
+        {/* Penutup surat */}
+        <footer className="px-6 pb-24 pt-8 text-center">
+          <p className="text-sm leading-relaxed text-muted-foreground">
+            Atas kehadiran dan doa Bapak/Ibu/Saudara/i, kami mengucapkan terima kasih.
+          </p>
+          <p className="mt-4 font-heading text-sm font-semibold text-primary">
+            Wassalamu&rsquo;alaikum Warahmatullahi Wabarakatuh
+          </p>
+          <p className="mt-6 text-xs text-muted-foreground">Hormat kami,</p>
+          <p className="mt-1 font-heading text-sm font-bold text-foreground">
+            {eventConfig.organizer}
+          </p>
+          <p className="mt-8 text-xs text-muted-foreground">
+            {eventConfig.eventName} &middot; {eventConfig.organizer}
+          </p>
+        </footer>
 
-      <footer className="border-t px-6 py-8">
-        <p className="mx-auto max-w-3xl text-center text-xs text-muted-foreground">
-          {eventConfig.eventName} &middot; {eventConfig.organizer}
-        </p>
-      </footer>
-
-      <StickyRsvpCta />
-    </main>
+        <StickyRsvpCta />
+      </main>
+    </div>
   );
 }
 
-function HeroFact({
-  icon,
-  label,
-  children,
-}: {
-  icon: React.ReactNode;
-  label: string;
-  children: React.ReactNode;
-}) {
+/** Bingkai ganda bergaya kertas undangan. */
+function Frame({ className, children }: { className?: string; children: React.ReactNode }) {
   return (
-    <div className="flex items-start gap-3 rounded-xl border bg-background/90 p-3 shadow-sm backdrop-blur sm:flex-col sm:gap-2">
-      <span className="text-brand-orange">{icon}</span>
-      <div>
-        <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
-          {label}
-        </p>
-        <p className="mt-0.5 text-sm font-semibold leading-snug text-foreground">{children}</p>
+    <div className="w-full rounded-lg border border-primary/40 p-1">
+      <div className={cn("h-full rounded-md border border-brand-orange/40", className)}>
+        {children}
       </div>
+    </div>
+  );
+}
+
+/** Pemisah tipis dengan belah ketupat di tengah. */
+function Ornament() {
+  return (
+    <div aria-hidden className="flex items-center justify-center gap-3">
+      <span className="h-px w-16 bg-primary/40" />
+      <span className="size-1.5 rotate-45 bg-brand-orange" />
+      <span className="h-px w-16 bg-primary/40" />
+    </div>
+  );
+}
+
+function Detail({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <dt className="text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
+        {label}
+      </dt>
+      <dd className="mt-1 font-heading text-base font-semibold text-foreground">{children}</dd>
     </div>
   );
 }

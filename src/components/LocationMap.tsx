@@ -32,7 +32,7 @@ export function LocationMap({
               loading="lazy"
               referrerPolicy="no-referrer-when-downgrade"
               allowFullScreen
-              className="aspect-4/3 w-full border-0 sm:aspect-video"
+              className="aspect-4/3 w-full border-0"
             />
           </CardContent>
         </Card>

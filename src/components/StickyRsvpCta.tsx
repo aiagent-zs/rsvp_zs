@@ -29,10 +29,11 @@ export function StickyRsvpCta() {
   const show = scrolled && !formInView;
 
   return (
+    <div className="pointer-events-none fixed inset-x-0 bottom-4 z-40 flex justify-center px-4">
     <div
       className={cn(
-        "fixed inset-x-4 bottom-4 z-40 transition-all duration-300 lg:hidden",
-        show ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-6 opacity-0"
+        "w-full max-w-md transition-all duration-300",
+        show ? "pointer-events-auto translate-y-0 opacity-100" : "pointer-events-none translate-y-6 opacity-0"
       )}
     >
       <a
@@ -42,6 +43,7 @@ export function StickyRsvpCta() {
       >
         Konfirmasi Kehadiran
       </a>
+    </div>
     </div>
   );
 }

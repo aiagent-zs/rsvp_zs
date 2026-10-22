@@ -96,10 +96,10 @@ export function RsvpForm() {
           variant="outline"
           className="grid w-full grid-cols-2"
         >
-          <ToggleGroupItem value="yes" className="h-9 text-sm">
+          <ToggleGroupItem value="yes" className="h-9 text-sm aria-pressed:bg-primary aria-pressed:text-primary-foreground">
             Ya, saya akan hadir
           </ToggleGroupItem>
-          <ToggleGroupItem value="no" className="h-9 text-sm">
+          <ToggleGroupItem value="no" className="h-9 text-sm aria-pressed:bg-primary aria-pressed:text-primary-foreground">
             Maaf, tidak bisa hadir
           </ToggleGroupItem>
         </ToggleGroup>
