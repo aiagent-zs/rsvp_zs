@@ -30,6 +30,6 @@ export const eventConfig = {
   dateISO: "2026-11-12T08:00:00+07:00",
   time: "08.00 - 16.00 WIB",
   location: "Universitas Islam Internasional Indonesia (UIII), Depok",
-  mapsUrl: "https://maps.google.com",
+  mapsUrl: "",
   rsvpDeadline: "5 November 2026",
 };

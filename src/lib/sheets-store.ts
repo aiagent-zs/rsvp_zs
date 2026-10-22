@@ -210,3 +210,72 @@ export function summarize(entries: RsvpEntry[]): RsvpSummary {
     notAttendingCount: notAttending.length,
   };
 }
+
+export type EventSettings = {
+  /** Format YYYY-MM-DD */
+  date: string;
+  /** Format HH:MM (WIB) */
+  startTime: string;
+  endTime: string;
+  location: string;
+  /** Tautan titik lokasi (Google Maps), boleh kosong */
+  mapsUrl: string;
+};
+
+const SETTINGS_SHEET_NAME = "Pengaturan";
+
+async function ensureSettingsSheet(sheets: sheets_v4.Sheets, spreadsheetId: string) {
+  const meta = await sheets.spreadsheets.get({ spreadsheetId });
+  const exists = meta.data.sheets?.some(
+    (sheet) => sheet.properties?.title === SETTINGS_SHEET_NAME
+  );
+  if (!exists) {
+    await sheets.spreadsheets.batchUpdate({
+      spreadsheetId,
+      requestBody: {
+        requests: [{ addSheet: { properties: { title: SETTINGS_SHEET_NAME } } }],
+      },
+    });
+  }
+}
+
+export async function getEventSettings(): Promise<Partial<EventSettings>> {
+  const sheets = getSheetsClient();
+  const spreadsheetId = getSpreadsheetId();
+  await ensureSettingsSheet(sheets, spreadsheetId);
+
+  const res = await sheets.spreadsheets.values.get({
+    spreadsheetId,
+    range: `${SETTINGS_SHEET_NAME}!A2:B`,
+  });
+  const map = new Map((res.data.values ?? []).map((row) => [row[0], row[1]]));
+  return {
+    date: map.get("date") || undefined,
+    startTime: map.get("startTime") || undefined,
+    endTime: map.get("endTime") || undefined,
+    location: map.get("location") || undefined,
+    mapsUrl: map.get("mapsUrl") || undefined,
+  };
+}
+
+export async function saveEventSettings(settings: EventSettings): Promise<void> {
+  const sheets = getSheetsClient();
+  const spreadsheetId = getSpreadsheetId();
+  await ensureSettingsSheet(sheets, spreadsheetId);
+
+  await sheets.spreadsheets.values.update({
+    spreadsheetId,
+    range: `${SETTINGS_SHEET_NAME}!A1:B6`,
+    valueInputOption: "RAW",
+    requestBody: {
+      values: [
+        ["Kunci", "Nilai"],
+        ["date", settings.date],
+        ["startTime", settings.startTime],
+        ["endTime", settings.endTime],
+        ["location", settings.location],
+        ["mapsUrl", settings.mapsUrl],
+      ],
+    },
+  });
+}

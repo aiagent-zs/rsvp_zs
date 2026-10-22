@@ -1,6 +1,13 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 type Attendance = "yes" | "no";
 
@@ -47,34 +54,28 @@ export function RsvpForm() {
 
   if (status === "success") {
     return (
-      <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-8 text-center dark:border-emerald-900 dark:bg-emerald-950">
-        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500 text-white">
-          ✓
-        </div>
-        <h3 className="text-lg font-semibold text-emerald-900 dark:text-emerald-200">
-          Terima kasih!
-        </h3>
-        <p className="mt-2 text-sm text-emerald-800 dark:text-emerald-300">
-          Konfirmasi kehadiran Anda telah kami terima.
-        </p>
-        <button
-          type="button"
-          onClick={() => setStatus("idle")}
-          className="mt-6 text-sm font-medium text-emerald-700 underline underline-offset-4 hover:text-emerald-900 dark:text-emerald-300"
-        >
-          Kirim konfirmasi lain
-        </button>
-      </div>
+      <Card className="items-center py-8 text-center">
+        <CardContent className="flex flex-col items-center">
+          <div className="mb-4 flex size-12 items-center justify-center rounded-full bg-primary text-primary-foreground">
+            ✓
+          </div>
+          <h3 className="text-lg font-semibold">Terima kasih!</h3>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Konfirmasi kehadiran Anda telah kami terima.
+          </p>
+          <Button variant="link" className="mt-4" onClick={() => setStatus("idle")}>
+            Kirim konfirmasi lain
+          </Button>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
-      <div>
-        <label htmlFor="name" className="block text-sm font-medium text-slate-700 dark:text-slate-200">
-          Nama lengkap
-        </label>
-        <input
+      <div className="space-y-1.5">
+        <Label htmlFor="name" className="text-sm">Nama lengkap</Label>
+        <Input
           id="name"
           type="text"
           required
@@ -83,46 +84,31 @@ export function RsvpForm() {
           value={name}
           onChange={(event) => setName(event.target.value)}
           placeholder="Masukkan nama Anda"
-          className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-slate-900 shadow-sm outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:focus:ring-emerald-900"
+          className="h-9 text-sm"
         />
       </div>
 
-      <div>
-        <span className="block text-sm font-medium text-slate-700 dark:text-slate-200">
-          Apakah Anda akan hadir?
-        </span>
-        <div className="mt-1.5 grid grid-cols-2 gap-3">
-          <button
-            type="button"
-            onClick={() => setAttendance("yes")}
-            className={`rounded-lg border px-4 py-2.5 text-sm font-medium transition ${
-              attendance === "yes"
-                ? "border-emerald-400 bg-emerald-50 text-emerald-700 dark:border-emerald-500 dark:bg-emerald-950 dark:text-emerald-300"
-                : "border-slate-300 text-slate-600 hover:border-slate-400 dark:border-slate-700 dark:text-slate-300"
-            }`}
-          >
+      <div className="space-y-1.5">
+        <Label className="text-sm">Apakah Anda akan hadir?</Label>
+        <ToggleGroup
+          value={[attendance]}
+          onValueChange={(value) => value[0] && setAttendance(value[0] as Attendance)}
+          variant="outline"
+          className="grid w-full grid-cols-2"
+        >
+          <ToggleGroupItem value="yes" className="h-9 text-sm">
             Ya, saya akan hadir
-          </button>
-          <button
-            type="button"
-            onClick={() => setAttendance("no")}
-            className={`rounded-lg border px-4 py-2.5 text-sm font-medium transition ${
-              attendance === "no"
-                ? "border-emerald-400 bg-emerald-50 text-emerald-700 dark:border-emerald-500 dark:bg-emerald-950 dark:text-emerald-300"
-                : "border-slate-300 text-slate-600 hover:border-slate-400 dark:border-slate-700 dark:text-slate-300"
-            }`}
-          >
+          </ToggleGroupItem>
+          <ToggleGroupItem value="no" className="h-9 text-sm">
             Maaf, tidak bisa hadir
-          </button>
-        </div>
+          </ToggleGroupItem>
+        </ToggleGroup>
       </div>
 
       {attendance === "yes" && (
-        <div>
-          <label htmlFor="guests" className="block text-sm font-medium text-slate-700 dark:text-slate-200">
-            Jumlah tamu (termasuk Anda)
-          </label>
-          <input
+        <div className="space-y-1.5">
+          <Label htmlFor="guests" className="text-sm">Jumlah tamu (termasuk Anda)</Label>
+          <Input
             id="guests"
             type="number"
             min={1}
@@ -130,39 +116,35 @@ export function RsvpForm() {
             required
             value={guests}
             onChange={(event) => setGuests(Number(event.target.value))}
-            className="mt-1.5 w-full rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-slate-900 shadow-sm outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:focus:ring-emerald-900"
+            className="h-9 text-sm"
           />
         </div>
       )}
 
-      <div>
-        <label htmlFor="message" className="block text-sm font-medium text-slate-700 dark:text-slate-200">
-          Catatan <span className="font-normal text-slate-400">(opsional)</span>
-        </label>
-        <textarea
+      <div className="space-y-1.5">
+        <Label htmlFor="message" className="text-sm">
+          Catatan <span className="font-normal text-muted-foreground">(opsional)</span>
+        </Label>
+        <Textarea
           id="message"
           rows={3}
           maxLength={500}
           value={message}
           onChange={(event) => setMessage(event.target.value)}
           placeholder="Instansi/lembaga, pertanyaan, atau catatan lain"
-          className="mt-1.5 w-full resize-none rounded-lg border border-slate-300 bg-white px-3.5 py-2.5 text-slate-900 shadow-sm outline-none transition focus:border-emerald-400 focus:ring-2 focus:ring-emerald-100 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:focus:ring-emerald-900"
+          className="resize-none text-sm"
         />
       </div>
 
       {error && (
-        <p className="rounded-lg bg-red-50 px-3.5 py-2.5 text-sm text-red-700 dark:bg-red-950 dark:text-red-300">
-          {error}
-        </p>
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
       )}
 
-      <button
-        type="submit"
-        disabled={status === "submitting"}
-        className="w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700 disabled:cursor-not-allowed disabled:opacity-60"
-      >
+      <Button type="submit" disabled={status === "submitting"} className="h-9 w-full text-sm">
         {status === "submitting" ? "Mengirim..." : "Kirim Konfirmasi"}
-      </button>
+      </Button>
     </form>
   );
 }

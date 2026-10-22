@@ -2,8 +2,13 @@ import Image from "next/image";
 import { Caveat } from "next/font/google";
 import { auth, signIn, signOut } from "@/auth";
 import { getAllRsvps, summarize } from "@/lib/sheets-store";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription } from "@/components/ui/card";
 import { AdminTable } from "@/components/AdminTable";
 import { eventConfig } from "@/lib/event";
+import { getEventConfig } from "@/lib/event-server";
+import { EventSettingsForm } from "@/components/EventSettingsForm";
 import { ChartBarIcon, GoogleIcon, ShieldCheckIcon, UsersIcon } from "@/components/icons";
 
 const caveat = Caveat({ subsets: ["latin"], weight: "600" });
@@ -115,7 +120,8 @@ export default async function AdminPage() {
           </div>
 
           <div className="flex flex-1 flex-col items-center justify-center px-6 py-16 sm:px-10">
-            <div className="w-full max-w-sm rounded-2xl border border-slate-200/70 bg-white/95 p-8 text-center shadow-xl backdrop-blur">
+            <Card className="w-full max-w-sm bg-card/95 p-4 text-center shadow-xl backdrop-blur">
+              <CardContent>
               <Image
                 src="/logo.png"
                 alt={eventConfig.organizer}
@@ -138,13 +144,10 @@ export default async function AdminPage() {
                 }}
                 className="mt-6"
               >
-                <button
-                  type="submit"
-                  className="flex w-full items-center justify-center gap-3 rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
-                >
+                <Button type="submit" variant="outline" className="h-10 w-full gap-3 text-sm">
                   <GoogleIcon className="h-5 w-5" />
                   Masuk dengan Google
-                </button>
+                </Button>
               </form>
 
               <div className="my-6 flex items-center gap-3 text-xs font-medium uppercase tracking-wide text-slate-400">
@@ -165,7 +168,8 @@ export default async function AdminPage() {
                   </p>
                 </div>
               </div>
-            </div>
+              </CardContent>
+            </Card>
 
             <p
               className={`mt-8 hidden text-center text-lg text-emerald-700/80 sm:block ${caveat.className}`}
@@ -190,6 +194,7 @@ export default async function AdminPage() {
   }
 
   const summary = summarize(entries);
+  const currentEvent = await getEventConfig();
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-10">
@@ -217,19 +222,26 @@ export default async function AdminPage() {
             await signOut();
           }}
         >
-          <button
-            type="submit"
-            className="rounded-lg border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-900"
-          >
+          <Button type="submit" variant="outline" className="h-9 text-sm">
             Keluar
-          </button>
+          </Button>
         </form>
       </div>
 
+      <div className="mt-8">
+        <EventSettingsForm
+          initialDate={currentEvent.dateISO.slice(0, 10)}
+          initialStartTime={currentEvent.startTime}
+          initialEndTime={currentEvent.endTime}
+          initialLocation={currentEvent.location}
+          initialMapsUrl={currentEvent.mapsUrl}
+        />
+      </div>
+
       {loadError ? (
-        <p className="mt-8 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700 dark:bg-red-950 dark:text-red-300">
-          {loadError}
-        </p>
+        <Alert variant="destructive" className="mt-8">
+          <AlertDescription>{loadError}</AlertDescription>
+        </Alert>
       ) : (
         <>
           <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -250,12 +262,12 @@ export default async function AdminPage() {
 
 function StatCard({ label, value }: { label: string; value: number }) {
   return (
-    <div className="rounded-xl border border-slate-200 bg-white p-4 dark:border-slate-800 dark:bg-slate-900">
-      <p className="text-xs font-medium text-slate-500 dark:text-slate-400">{label}</p>
-      <p className="mt-1 text-2xl font-semibold text-slate-900 dark:text-slate-100">
-        {value}
-      </p>
-    </div>
+    <Card size="sm">
+      <CardContent>
+        <CardDescription>{label}</CardDescription>
+        <p className="mt-1 text-2xl font-semibold">{value}</p>
+      </CardContent>
+    </Card>
   );
 }
 

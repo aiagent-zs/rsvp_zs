@@ -46,23 +46,23 @@ export function CountdownTimer({
   ];
 
   return (
-    <div className="flex items-center gap-4 rounded-2xl border border-slate-100 bg-white/95 px-5 py-4 shadow-xl backdrop-blur">
+    <div className="flex items-center gap-4 rounded-2xl border bg-background/95 px-5 py-4 shadow-xl backdrop-blur">
       <div>
-        <p className="text-xs font-medium text-slate-500">
-          Menuju <span className="font-semibold text-slate-700">{eventName}</span>
+        <p className="text-xs font-medium text-muted-foreground">
+          Menuju <span className="font-semibold text-foreground">{eventName}</span>
         </p>
         <div className="mt-2 flex gap-4">
           {units.map((unit) => (
             <div key={unit.label} className="text-center">
-              <p className="text-xl font-bold tabular-nums text-emerald-700 sm:text-2xl">
+              <p className="text-xl font-heading font-bold tabular-nums text-primary sm:text-2xl">
                 {String(unit.value).padStart(2, "0")}
               </p>
-              <p className="text-[11px] text-slate-400">{unit.label}</p>
+              <p className="text-[11px] text-muted-foreground">{unit.label}</p>
             </div>
           ))}
         </div>
       </div>
-      <div className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 sm:flex">
+      <div className="hidden h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary sm:flex">
         <CalendarIcon className="h-5 w-5" />
       </div>
     </div>
