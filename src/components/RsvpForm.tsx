@@ -16,9 +16,9 @@ export function RsvpForm() {
   const [attendance, setAttendance] = useState<Attendance>("yes");
   const [guests, setGuests] = useState(1);
   const [message, setMessage] = useState("");
-  const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">(
-    "idle"
-  );
+  const [status, setStatus] = useState<
+    "idle" | "submitting" | "success" | "error"
+  >("idle");
   const [error, setError] = useState<string | null>(null);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -63,7 +63,11 @@ export function RsvpForm() {
           <p className="mt-2 text-sm text-muted-foreground">
             Konfirmasi kehadiran Anda telah kami terima.
           </p>
-          <Button variant="link" className="mt-4" onClick={() => setStatus("idle")}>
+          <Button
+            variant="link"
+            className="mt-4"
+            onClick={() => setStatus("idle")}
+          >
             Kirim konfirmasi lain
           </Button>
         </CardContent>
@@ -74,7 +78,9 @@ export function RsvpForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
       <div className="space-y-1.5">
-        <Label htmlFor="name" className="text-sm">Nama lengkap</Label>
+        <Label htmlFor="name" className="text-sm">
+          Nama lengkap
+        </Label>
         <Input
           id="name"
           type="text"
@@ -92,22 +98,32 @@ export function RsvpForm() {
         <Label className="text-sm">Apakah Anda akan hadir?</Label>
         <ToggleGroup
           value={[attendance]}
-          onValueChange={(value) => value[0] && setAttendance(value[0] as Attendance)}
+          onValueChange={(value) =>
+            value[0] && setAttendance(value[0] as Attendance)
+          }
           variant="outline"
           className="grid w-full grid-cols-2"
         >
-          <ToggleGroupItem value="yes" className="h-9 text-sm aria-pressed:bg-primary aria-pressed:text-primary-foreground">
-            Ya, saya akan hadir
+          <ToggleGroupItem
+            value="yes"
+            className="h-9 text-sm aria-pressed:bg-primary aria-pressed:text-primary-foreground"
+          >
+            Ya
           </ToggleGroupItem>
-          <ToggleGroupItem value="no" className="h-9 text-sm aria-pressed:bg-primary aria-pressed:text-primary-foreground">
-            Maaf, tidak bisa hadir
+          <ToggleGroupItem
+            value="no"
+            className="h-9 text-sm aria-pressed:bg-primary aria-pressed:text-primary-foreground"
+          >
+            Tidak
           </ToggleGroupItem>
         </ToggleGroup>
       </div>
 
       {attendance === "yes" && (
         <div className="space-y-1.5">
-          <Label htmlFor="guests" className="text-sm">Jumlah tamu (termasuk Anda)</Label>
+          <Label htmlFor="guests" className="text-sm">
+            Jumlah tamu (termasuk Anda)
+          </Label>
           <Input
             id="guests"
             type="number"
@@ -123,7 +139,8 @@ export function RsvpForm() {
 
       <div className="space-y-1.5">
         <Label htmlFor="message" className="text-sm">
-          Catatan <span className="font-normal text-muted-foreground">(opsional)</span>
+          Catatan{" "}
+          <span className="font-normal text-muted-foreground">(opsional)</span>
         </Label>
         <Textarea
           id="message"
@@ -142,7 +159,11 @@ export function RsvpForm() {
         </Alert>
       )}
 
-      <Button type="submit" disabled={status === "submitting"} className="h-9 w-full text-sm">
+      <Button
+        type="submit"
+        disabled={status === "submitting"}
+        className="h-9 w-full text-sm"
+      >
         {status === "submitting" ? "Mengirim..." : "Kirim Konfirmasi"}
       </Button>
     </form>
