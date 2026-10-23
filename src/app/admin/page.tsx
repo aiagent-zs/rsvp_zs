@@ -244,11 +244,12 @@ export default async function AdminPage() {
         </Alert>
       ) : (
         <>
-          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-5">
             <StatCard label="Total Respon" value={summary.totalResponses} />
             <StatCard label="Konfirmasi Hadir" value={summary.attendingCount} />
             <StatCard label="Total Tamu Hadir" value={summary.totalAttendingGuests} />
             <StatCard label="Tidak Hadir" value={summary.notAttendingCount} />
+            <StatCard label="Sudah Check-in" value={summary.checkedInCount} />
           </div>
 
           <div className="mt-8">

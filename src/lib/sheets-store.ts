@@ -12,6 +12,8 @@ export type RsvpEntry = {
   phone: string;
   email: string;
   createdAt: string;
+  /** Waktu check-in (ISO); kosong bila belum check-in */
+  checkedInAt: string;
 };
 
 export type NewRsvpInput = {
@@ -24,7 +26,7 @@ export type NewRsvpInput = {
 };
 
 const SHEET_NAME = process.env.GOOGLE_SHEET_NAME || "RSVP";
-const HEADER = ["ID", "Nama", "Kehadiran", "Jumlah Tamu", "Pesan", "Waktu Konfirmasi", "Telepon", "Email"];
+const HEADER = ["ID", "Nama", "Kehadiran", "Jumlah Tamu", "Pesan", "Waktu Konfirmasi", "Telepon", "Email", "Check-in"];
 
 function getSpreadsheetId(): string {
   const id = process.env.GOOGLE_SHEET_ID;
@@ -79,14 +81,14 @@ async function ensureSheetReady(sheets: sheets_v4.Sheets, spreadsheetId: string)
 
   const headerRes = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: `${SHEET_NAME}!A1:H1`,
+    range: `${SHEET_NAME}!A1:I1`,
   });
   const firstRow = headerRes.data.values?.[0];
   // juga memperbarui header sheet lama yang belum punya kolom Telepon/Email
   if (!firstRow || firstRow[0] !== "ID" || firstRow.length < HEADER.length) {
     await sheets.spreadsheets.values.update({
       spreadsheetId,
-      range: `${SHEET_NAME}!A1:H1`,
+      range: `${SHEET_NAME}!A1:I1`,
       valueInputOption: "RAW",
       requestBody: { values: [HEADER] },
     });
@@ -96,7 +98,7 @@ async function ensureSheetReady(sheets: sheets_v4.Sheets, spreadsheetId: string)
 }
 
 function rowToEntry(row: string[]): RsvpEntry | null {
-  const [id, name, attendance, guests, message, createdAt, phone, email] = row;
+  const [id, name, attendance, guests, message, createdAt, phone, email, checkedInAt] = row;
   if (!id || !name) return null;
   return {
     id,
@@ -107,6 +109,7 @@ function rowToEntry(row: string[]): RsvpEntry | null {
     phone: phone ?? "",
     email: email ?? "",
     createdAt: createdAt ?? "",
+    checkedInAt: checkedInAt ?? "",
   };
 }
 
@@ -117,7 +120,7 @@ export async function getAllRsvps(): Promise<RsvpEntry[]> {
 
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: `${SHEET_NAME}!A2:H`,
+    range: `${SHEET_NAME}!A2:I`,
   });
 
   const rows = res.data.values ?? [];
@@ -144,11 +147,12 @@ export async function addRsvp(input: NewRsvpInput): Promise<RsvpEntry> {
     phone: input.phone,
     email: input.email,
     createdAt: new Date().toISOString(),
+    checkedInAt: "",
   };
 
   await sheets.spreadsheets.values.append({
     spreadsheetId,
-    range: `${SHEET_NAME}!A:H`,
+    range: `${SHEET_NAME}!A:I`,
     valueInputOption: "RAW",
     insertDataOption: "INSERT_ROWS",
     requestBody: {
@@ -162,6 +166,7 @@ export async function addRsvp(input: NewRsvpInput): Promise<RsvpEntry> {
           entry.createdAt,
           entry.phone,
           entry.email,
+          entry.checkedInAt,
         ],
       ],
     },
@@ -204,11 +209,34 @@ export async function deleteRsvp(id: string): Promise<boolean> {
   return true;
 }
 
+export async function setCheckIn(id: string, checkedIn: boolean): Promise<string | null> {
+  const sheets = getSheetsClient();
+  const spreadsheetId = getSpreadsheetId();
+  await ensureSheetReady(sheets, spreadsheetId);
+
+  const res = await sheets.spreadsheets.values.get({
+    spreadsheetId,
+    range: `${SHEET_NAME}!A:A`,
+  });
+  const rowIndex = (res.data.values ?? []).findIndex((row) => row[0] === id);
+  if (rowIndex <= 0) return null; // not found, or header row
+
+  const checkedInAt = checkedIn ? new Date().toISOString() : "";
+  await sheets.spreadsheets.values.update({
+    spreadsheetId,
+    range: `${SHEET_NAME}!I${rowIndex + 1}`,
+    valueInputOption: "RAW",
+    requestBody: { values: [[checkedInAt]] },
+  });
+  return checkedInAt;
+}
+
 export type RsvpSummary = {
   totalResponses: number;
   totalAttendingGuests: number;
   attendingCount: number;
   notAttendingCount: number;
+  checkedInCount: number;
 };
 
 export function summarize(entries: RsvpEntry[]): RsvpSummary {
@@ -219,6 +247,7 @@ export function summarize(entries: RsvpEntry[]): RsvpSummary {
     totalAttendingGuests: attending.reduce((sum, entry) => sum + entry.guests, 0),
     attendingCount: attending.length,
     notAttendingCount: notAttending.length,
+    checkedInCount: entries.filter((entry) => entry.checkedInAt).length,
   };
 }
 
