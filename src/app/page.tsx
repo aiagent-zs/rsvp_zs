@@ -165,6 +165,24 @@ export default async function Home() {
 
         {/* Penutup surat */}
         <footer className="px-6 pb-24 pt-8 text-center">
+          <p className="text-xs text-muted-foreground">
+            Informasi lebih lanjut hubungi
+          </p>
+          <p className="mt-1 font-heading text-sm font-semibold text-foreground">
+            {eventConfig.contact.name}
+          </p>
+          <a
+            href={eventConfig.contact.whatsappUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(
+              buttonVariants({ variant: "outline" }),
+              "mt-2 h-9 rounded-full px-4 text-sm",
+            )}
+          >
+            {eventConfig.contact.phone}
+          </a>
+          <div className="mx-auto my-8 h-px w-16 bg-primary/30" />
           <p className="text-sm leading-relaxed text-muted-foreground">
             Atas kehadiran dan doa Bapak/Ibu/Saudara/i, kami mengucapkan terima
             kasih.

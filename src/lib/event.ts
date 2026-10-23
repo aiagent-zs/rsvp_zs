@@ -31,4 +31,9 @@ export const eventConfig = {
   location: "Atrium Mall Pesona Square",
   mapsUrl: "",
   rsvpDeadline: "25 Oktober 2026",
+  contact: {
+    name: "Priyatiningsih",
+    phone: "+62 895-0520-9919",
+    whatsappUrl: "https://wa.me/628950520919",
+  },
 };

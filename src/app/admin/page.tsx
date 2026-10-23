@@ -3,7 +3,8 @@ import { Caveat } from "next/font/google";
 import { auth, signIn, signOut } from "@/auth";
 import { getAllRsvps, summarize } from "@/lib/sheets-store";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { Card, CardContent, CardDescription } from "@/components/ui/card";
 import { AdminTable } from "@/components/AdminTable";
 import { eventConfig } from "@/lib/event";
@@ -216,6 +217,14 @@ export default async function AdminPage() {
             </p>
           </div>
         </div>
+        <div className="flex items-center gap-2">
+        <a
+          href="/api/admin/export"
+          download
+          className={cn(buttonVariants({ variant: "outline" }), "h-9 text-sm")}
+        >
+          Unduh Excel
+        </a>
         <form
           action={async () => {
             "use server";
@@ -226,6 +235,7 @@ export default async function AdminPage() {
             Keluar
           </Button>
         </form>
+        </div>
       </div>
 
       <div className="mt-8">
@@ -244,12 +254,13 @@ export default async function AdminPage() {
         </Alert>
       ) : (
         <>
-          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-5">
+          <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
             <StatCard label="Total Respon" value={summary.totalResponses} />
             <StatCard label="Konfirmasi Hadir" value={summary.attendingCount} />
             <StatCard label="Total Tamu Hadir" value={summary.totalAttendingGuests} />
             <StatCard label="Tidak Hadir" value={summary.notAttendingCount} />
             <StatCard label="Sudah Check-in" value={summary.checkedInCount} />
+            <StatCard label="Total Tamu Sudah Absen" value={summary.checkedInGuests} />
           </div>
 
           <div className="mt-8">

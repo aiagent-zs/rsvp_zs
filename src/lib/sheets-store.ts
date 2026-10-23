@@ -237,6 +237,8 @@ export type RsvpSummary = {
   attendingCount: number;
   notAttendingCount: number;
   checkedInCount: number;
+  /** Jumlah orang yang sudah check-in (tamu yang tidak hadir di RSVP dihitung 1 orang) */
+  checkedInGuests: number;
 };
 
 export function summarize(entries: RsvpEntry[]): RsvpSummary {
@@ -248,6 +250,9 @@ export function summarize(entries: RsvpEntry[]): RsvpSummary {
     attendingCount: attending.length,
     notAttendingCount: notAttending.length,
     checkedInCount: entries.filter((entry) => entry.checkedInAt).length,
+    checkedInGuests: entries
+      .filter((entry) => entry.checkedInAt)
+      .reduce((sum, entry) => sum + (entry.attendance === "yes" ? entry.guests : 1), 0),
   };
 }
 
