@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { addRsvp } from "@/lib/sheets-store";
 
 const MAX_GUESTS = 10;
+const PHONE_PATTERN = /^\+?[\d\s().-]{6,20}$/;
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export async function POST(request: NextRequest) {
   let body: unknown;
@@ -15,7 +17,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Data tidak valid." }, { status: 400 });
   }
 
-  const { name, attendance, guests, message } = body as Record<string, unknown>;
+  const { name, attendance, guests, message, phone, email } = body as Record<string, unknown>;
 
   if (typeof name !== "string" || name.trim().length < 2) {
     return NextResponse.json(
@@ -42,12 +44,24 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  const phoneValue = typeof phone === "string" ? phone.trim() : "";
+  if (phoneValue && !PHONE_PATTERN.test(phoneValue)) {
+    return NextResponse.json({ error: "Format nomor telepon tidak valid." }, { status: 400 });
+  }
+
+  const emailValue = typeof email === "string" ? email.trim() : "";
+  if (emailValue && (emailValue.length > 100 || !EMAIL_PATTERN.test(emailValue))) {
+    return NextResponse.json({ error: "Format email tidak valid." }, { status: 400 });
+  }
+
   try {
     const entry = await addRsvp({
       name: name.trim().slice(0, 100),
       attendance,
       guests: attendance === "yes" ? guestsNumber : 0,
       message: typeof message === "string" ? message.trim().slice(0, 500) : "",
+      phone: phoneValue,
+      email: emailValue,
     });
 
     return NextResponse.json({ entry }, { status: 201 });

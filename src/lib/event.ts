@@ -1,7 +1,6 @@
 export const eventConfig = {
   organizer: "Zakat Sukses",
-  series: "Rangkaian Milad Zakat Sukses",
-  pillars: ["Akuntabel", "Kolaboratif", "Berdampak"],
+  series: "Sukses Ekspose",
   eventName: "Sukses Ekspose 2026",
   heroTitle: {
     line1: "SUKSES",

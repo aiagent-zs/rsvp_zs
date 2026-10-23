@@ -15,6 +15,8 @@ export function RsvpForm() {
   const [name, setName] = useState("");
   const [attendance, setAttendance] = useState<Attendance>("yes");
   const [guests, setGuests] = useState(1);
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState<
     "idle" | "submitting" | "success" | "error"
@@ -30,7 +32,7 @@ export function RsvpForm() {
       const response = await fetch("/api/rsvp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, attendance, guests, message }),
+        body: JSON.stringify({ name, attendance, guests, message, phone, email }),
       });
 
       const data = await response.json();
@@ -44,6 +46,8 @@ export function RsvpForm() {
       setStatus("success");
       setName("");
       setMessage("");
+      setPhone("");
+      setEmail("");
       setGuests(1);
       setAttendance("yes");
     } catch {
@@ -90,6 +94,35 @@ export function RsvpForm() {
           value={name}
           onChange={(event) => setName(event.target.value)}
           placeholder="Masukkan nama Anda"
+          className="h-9 text-sm"
+        />
+      </div>
+
+      <div className="space-y-1.5">
+        <Label htmlFor="phone" className="text-sm">Nomor telepon</Label>
+        <Input
+          id="phone"
+          type="tel"
+          inputMode="tel"
+          autoComplete="tel"
+          maxLength={20}
+          value={phone}
+          onChange={(event) => setPhone(event.target.value)}
+          placeholder="08xxxxxxxxxx"
+          className="h-9 text-sm"
+        />
+      </div>
+
+      <div className="space-y-1.5">
+        <Label htmlFor="email" className="text-sm">Email</Label>
+        <Input
+          id="email"
+          type="email"
+          autoComplete="email"
+          maxLength={100}
+          value={email}
+          onChange={(event) => setEmail(event.target.value)}
+          placeholder="nama@email.com"
           className="h-9 text-sm"
         />
       </div>

@@ -47,6 +47,8 @@ export function AdminTable({ entries }: { entries: RsvpEntry[] }) {
         <TableHeader>
           <TableRow>
             <TableHead>Nama</TableHead>
+            <TableHead>Telepon</TableHead>
+            <TableHead>Email</TableHead>
             <TableHead>Kehadiran</TableHead>
             <TableHead>Tamu</TableHead>
             <TableHead>Ucapan</TableHead>
@@ -58,6 +60,8 @@ export function AdminTable({ entries }: { entries: RsvpEntry[] }) {
           {entries.map((entry) => (
             <TableRow key={entry.id}>
               <TableCell className="font-medium">{entry.name}</TableCell>
+              <TableCell className="whitespace-nowrap">{entry.phone || "-"}</TableCell>
+              <TableCell>{entry.email || "-"}</TableCell>
               <TableCell>
                 <Badge variant={entry.attendance === "yes" ? "default" : "secondary"}>
                   {entry.attendance === "yes" ? "Hadir" : "Tidak Hadir"}

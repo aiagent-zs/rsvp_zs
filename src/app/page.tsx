@@ -17,7 +17,10 @@ export const revalidate = 60;
 
 export default async function Home() {
   const eventConfig = await getEventConfig();
-  const mapEmbedUrl = await getMapEmbedUrl(eventConfig.mapsUrl, eventConfig.location);
+  const mapEmbedUrl = await getMapEmbedUrl(
+    eventConfig.mapsUrl,
+    eventConfig.location,
+  );
 
   return (
     <div className="min-h-screen bg-muted">
@@ -42,11 +45,11 @@ export default async function Home() {
 
             <div className="relative mt-6 aspect-4/5 w-full max-w-60 overflow-hidden rounded-t-full border-4 border-background shadow-lg ring-1 ring-primary/30">
               <Image
-                src="/bg-hero.png"
+                src="/hero.png"
                 alt=""
                 fill
                 priority
-                sizes="240px"
+                sizes="500px"
                 className="object-cover object-right"
               />
             </div>
@@ -54,10 +57,16 @@ export default async function Home() {
             <h1 className="mt-6 font-heading text-4xl font-extrabold uppercase leading-[0.95] tracking-tight text-foreground">
               {eventConfig.heroTitle.line1}
               <br />
-              <span className="text-primary">{eventConfig.heroTitle.line2}</span>{" "}
-              <span className="text-brand-orange">{eventConfig.heroTitle.year}</span>
+              <span className="text-primary">
+                {eventConfig.heroTitle.line2}
+              </span>{" "}
+              <span className="text-brand-orange">
+                {eventConfig.heroTitle.year}
+              </span>
             </h1>
-            <p className={`mt-3 text-lg leading-snug text-foreground ${caveat.className}`}>
+            <p
+              className={`mt-3 text-lg leading-snug text-foreground ${caveat.className}`}
+            >
               &ldquo;{eventConfig.quote}&rdquo;
             </p>
 
@@ -69,7 +78,10 @@ export default async function Home() {
               </p>
               <a
                 href="#undangan"
-                className={cn(buttonVariants(), "mt-5 h-11 gap-2 rounded-full px-7 text-sm font-semibold")}
+                className={cn(
+                  buttonVariants(),
+                  "mt-5 h-11 gap-2 rounded-full px-7 text-sm font-semibold",
+                )}
               >
                 Buka Undangan
                 <span aria-hidden>&darr;</span>
@@ -86,14 +98,12 @@ export default async function Home() {
                 Assalamu&rsquo;alaikum Warahmatullahi Wabarakatuh
               </p>
               <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
-                Dengan hormat, kami mengundang Bapak/Ibu/Saudara/i untuk menghadiri
+                Dengan hormat, kami mengundang Bapak/Ibu/Saudara/i untuk
+                menghadiri
               </p>
               <h2 className="mt-4 font-heading text-2xl font-extrabold uppercase leading-tight text-foreground">
                 {eventConfig.eventName}
               </h2>
-              <p className="mt-1 text-xs font-medium text-brand-orange">
-                {eventConfig.pillars.join(" • ")}
-              </p>
               <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
                 {eventConfig.description}
               </p>
@@ -114,30 +124,6 @@ export default async function Home() {
                   eventName={eventConfig.eventName}
                 />
               </div>
-            </Reveal>
-
-            <Reveal className="mt-10">
-              <Ornament />
-              <h3 className="mt-6 font-heading text-sm font-bold text-primary">
-                Dalam acara ini akan dibahas
-              </h3>
-              <ol className="mt-5 space-y-5 text-left">
-                {eventConfig.highlights.map((item, index) => (
-                  <li key={item.title} className="flex gap-4">
-                    <span className="flex size-8 shrink-0 items-center justify-center rounded-full border border-primary/40 font-heading text-sm font-bold text-primary">
-                      {index + 1}
-                    </span>
-                    <div>
-                      <p className="font-heading text-sm font-semibold text-foreground">
-                        {item.title}
-                      </p>
-                      <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                        {item.detail}
-                      </p>
-                    </div>
-                  </li>
-                ))}
-              </ol>
             </Reveal>
           </Frame>
         </section>
@@ -163,7 +149,8 @@ export default async function Home() {
                 </h2>
                 <div className="mx-auto mt-2 h-0.5 w-10 bg-brand-orange" />
                 <p className="mt-4 text-sm text-muted-foreground">
-                  Mohon konfirmasi kehadiran Anda sebelum {eventConfig.rsvpDeadline}.
+                  Mohon konfirmasi kehadiran Anda sebelum{" "}
+                  {eventConfig.rsvpDeadline}.
                 </p>
               </div>
 
@@ -179,7 +166,8 @@ export default async function Home() {
         {/* Penutup surat */}
         <footer className="px-6 pb-24 pt-8 text-center">
           <p className="text-sm leading-relaxed text-muted-foreground">
-            Atas kehadiran dan doa Bapak/Ibu/Saudara/i, kami mengucapkan terima kasih.
+            Atas kehadiran dan doa Bapak/Ibu/Saudara/i, kami mengucapkan terima
+            kasih.
           </p>
           <p className="mt-4 font-heading text-sm font-semibold text-primary">
             Wassalamu&rsquo;alaikum Warahmatullahi Wabarakatuh
@@ -200,10 +188,21 @@ export default async function Home() {
 }
 
 /** Bingkai ganda bergaya kertas undangan. */
-function Frame({ className, children }: { className?: string; children: React.ReactNode }) {
+function Frame({
+  className,
+  children,
+}: {
+  className?: string;
+  children: React.ReactNode;
+}) {
   return (
     <div className="w-full rounded-lg border border-primary/40 p-1">
-      <div className={cn("h-full rounded-md border border-brand-orange/40", className)}>
+      <div
+        className={cn(
+          "h-full rounded-md border border-brand-orange/40",
+          className,
+        )}
+      >
         {children}
       </div>
     </div>
@@ -221,13 +220,21 @@ function Ornament() {
   );
 }
 
-function Detail({ label, children }: { label: string; children: React.ReactNode }) {
+function Detail({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
   return (
     <div>
       <dt className="text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground">
         {label}
       </dt>
-      <dd className="mt-1 font-heading text-base font-semibold text-foreground">{children}</dd>
+      <dd className="mt-1 font-heading text-base font-semibold text-foreground">
+        {children}
+      </dd>
     </div>
   );
 }

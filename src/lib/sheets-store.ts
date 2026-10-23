@@ -9,6 +9,8 @@ export type RsvpEntry = {
   attendance: Attendance;
   guests: number;
   message: string;
+  phone: string;
+  email: string;
   createdAt: string;
 };
 
@@ -17,10 +19,12 @@ export type NewRsvpInput = {
   attendance: Attendance;
   guests: number;
   message: string;
+  phone: string;
+  email: string;
 };
 
 const SHEET_NAME = process.env.GOOGLE_SHEET_NAME || "RSVP";
-const HEADER = ["ID", "Nama", "Kehadiran", "Jumlah Tamu", "Pesan", "Waktu Konfirmasi"];
+const HEADER = ["ID", "Nama", "Kehadiran", "Jumlah Tamu", "Pesan", "Waktu Konfirmasi", "Telepon", "Email"];
 
 function getSpreadsheetId(): string {
   const id = process.env.GOOGLE_SHEET_ID;
@@ -75,13 +79,14 @@ async function ensureSheetReady(sheets: sheets_v4.Sheets, spreadsheetId: string)
 
   const headerRes = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: `${SHEET_NAME}!A1:F1`,
+    range: `${SHEET_NAME}!A1:H1`,
   });
   const firstRow = headerRes.data.values?.[0];
-  if (!firstRow || firstRow[0] !== "ID") {
+  // juga memperbarui header sheet lama yang belum punya kolom Telepon/Email
+  if (!firstRow || firstRow[0] !== "ID" || firstRow.length < HEADER.length) {
     await sheets.spreadsheets.values.update({
       spreadsheetId,
-      range: `${SHEET_NAME}!A1:F1`,
+      range: `${SHEET_NAME}!A1:H1`,
       valueInputOption: "RAW",
       requestBody: { values: [HEADER] },
     });
@@ -91,7 +96,7 @@ async function ensureSheetReady(sheets: sheets_v4.Sheets, spreadsheetId: string)
 }
 
 function rowToEntry(row: string[]): RsvpEntry | null {
-  const [id, name, attendance, guests, message, createdAt] = row;
+  const [id, name, attendance, guests, message, createdAt, phone, email] = row;
   if (!id || !name) return null;
   return {
     id,
@@ -99,6 +104,8 @@ function rowToEntry(row: string[]): RsvpEntry | null {
     attendance: attendance === "no" ? "no" : "yes",
     guests: Number(guests) || 0,
     message: message ?? "",
+    phone: phone ?? "",
+    email: email ?? "",
     createdAt: createdAt ?? "",
   };
 }
@@ -110,7 +117,7 @@ export async function getAllRsvps(): Promise<RsvpEntry[]> {
 
   const res = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: `${SHEET_NAME}!A2:F`,
+    range: `${SHEET_NAME}!A2:H`,
   });
 
   const rows = res.data.values ?? [];
@@ -134,12 +141,14 @@ export async function addRsvp(input: NewRsvpInput): Promise<RsvpEntry> {
     attendance: input.attendance,
     guests: input.guests,
     message: input.message,
+    phone: input.phone,
+    email: input.email,
     createdAt: new Date().toISOString(),
   };
 
   await sheets.spreadsheets.values.append({
     spreadsheetId,
-    range: `${SHEET_NAME}!A:F`,
+    range: `${SHEET_NAME}!A:H`,
     valueInputOption: "RAW",
     insertDataOption: "INSERT_ROWS",
     requestBody: {
@@ -151,6 +160,8 @@ export async function addRsvp(input: NewRsvpInput): Promise<RsvpEntry> {
           String(entry.guests),
           entry.message,
           entry.createdAt,
+          entry.phone,
+          entry.email,
         ],
       ],
     },

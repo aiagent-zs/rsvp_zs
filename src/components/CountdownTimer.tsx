@@ -46,10 +46,11 @@ export function CountdownTimer({
   ];
 
   return (
-    <div className="flex items-center gap-4 rounded-2xl border bg-background/95 px-5 py-4 shadow-xl backdrop-blur">
+    <div className="flex items-center justify-center w-full gap-4 rounded-2xl border bg-background/95 px-5 py-4 shadow-xl backdrop-blur">
       <div>
         <p className="text-xs font-medium text-muted-foreground">
-          Menuju <span className="font-semibold text-foreground">{eventName}</span>
+          Menuju{" "}
+          <span className="font-semibold text-foreground">{eventName}</span>
         </p>
         <div className="mt-2 flex gap-4">
           {units.map((unit) => (
